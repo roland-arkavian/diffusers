@@ -662,11 +662,13 @@ class StableDiffusionPipeline(
 
         if latents is None:
             latents = randn_tensor(shape, generator=generator, device=device, dtype=dtype)
+            latents = latents * self.scheduler.init_noise_sigma
+
         else:
             latents = latents.to(device)
 
         # scale the initial noise by the standard deviation required by the scheduler
-        latents = latents * self.scheduler.init_noise_sigma
+        # latents = latents * self.scheduler.init_noise_sigma
         return latents
 
     # Copied from diffusers.pipelines.latent_consistency_models.pipeline_latent_consistency_text2img.LatentConsistencyModelPipeline.get_guidance_scale_embedding
@@ -968,8 +970,8 @@ class StableDiffusionPipeline(
 
                 if start_step is not None and i < start_step:
                     progress_bar.update()
-
                     continue
+
                 if end_step is not None and i == end_step:
                     break
 
